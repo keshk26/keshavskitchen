@@ -5,7 +5,7 @@ Recipes and I have saved over time. View and filter recipes and save your favori
 <table>
   <tr>
     <td><img src="https://github.com/user-attachments/assets/e440ffee-536d-47ea-ab58-5034a757c727" width="300" alt="Screenshot 1"></td>
-    <td><img src="https://github.com/user-attachments/assets/d0e92c6a-b7d9-4430-8049-59ea9bf08413" width="300" alt="Screenshot 2"></td>
+    <td><img src="https://github.com/user-attachments/assets/8937d8c5-059b-4750-9253-6f8a15112581" width="300" alt="Screenshot 2"></td>
     <td><img src="https://github.com/user-attachments/assets/b5218734-45c9-4386-9c0f-f6df7224594f" width="300" alt="Screenshot 3"></td>
   </tr>
 </table>
