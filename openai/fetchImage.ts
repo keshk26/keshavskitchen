@@ -23,8 +23,6 @@ const generateRecipeImage: GenerateRecipeImage = async (recipe) => {
     const response = await openai.images.generate(imageParams);
     const imageUrl = response.data[0]?.url ?? '';
     const imageExpiration = imageUrl.match(/se=([^&]+)/)?.[1];
-    console.log(imageUrl);
-    console.log(imageExpiration);
     return { imageUrl, imageExpiration };
   } catch (error) {
     console.error('Error generating recipe image:', error);

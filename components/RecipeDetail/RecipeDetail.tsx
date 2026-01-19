@@ -16,7 +16,9 @@ const RecipeDetail = () => {
   }, [recipe]);
 
   const imageExpired = useMemo(() => {
-    return recipe?.imageExpiration ? new Date(recipe.imageExpiration) < new Date() : false;
+    return recipe?.imageExpiration
+      ? new Date(decodeURIComponent(recipe.imageExpiration)) < new Date()
+      : false;
   }, [recipe]);
 
   const toggleFavorite = useCallback(async () => {
@@ -87,10 +89,10 @@ const RecipeDetail = () => {
             </Pressable>
           )}
         </View>
-        {recipe?.imageUrl && !imageLoading && (
+        {recipe?.imageUrl && !imageExpired && !imageLoading && (
           <Pressable onPress={generateImage}>
             <Text className="text-[#FF4B4B] font-semibold text-center text-xl">
-              GENERATE {imageExpired ? 'NEW' : 'DIFFERENT'} IMAGE
+              GENERATE DIFFERENT IMAGE
             </Text>
           </Pressable>
         )}
