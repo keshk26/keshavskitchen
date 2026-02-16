@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Recipe } from '@/types';
-import subscribeToRecipe from '@/firebase/subscribeToRecipe';
+import fetchRecipe from '@/supabase/fetchRecipe';
 import generateRecipeImage from '@/openai/fetchImage';
-import updateRecipe from '@/firebase/updateRecipe';
+import updateRecipe from '@/supabase/updateRecipe';
 
 const useRecipeDetail = (id: string) => {
   const [recipe, setRecipe] = useState<Recipe | null>(null);
@@ -10,11 +10,23 @@ const useRecipeDetail = (id: string) => {
   const [imageLoading, setImageLoading] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = subscribeToRecipe(id, (recipe) => {
-      setRecipe(recipe);
-      setLoading(false);
-    });
-    return () => unsubscribe();
+    let active = true;
+
+    fetchRecipe(id)
+      .then((recipe) => {
+        if (!active) return;
+        setRecipe(recipe);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error('Error fetching recipe:', error);
+        if (!active) return;
+        setLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
   }, [id]);
 
   const generateImage = useCallback(async () => {

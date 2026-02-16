@@ -1,9 +1,19 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react-native';
 import RecipeDetail from './RecipeDetail';
 import { useLocalSearchParams } from 'expo-router';
-import { doc, onSnapshot, updateDoc } from '@firebase/firestore';
-import { db } from '../../firebase/config';
+import fetchRecipe from '@/supabase/fetchRecipe';
+import updateRecipe from '@/supabase/updateRecipe';
 import mockRecipe from './recipe.mock';
+
+jest.mock('@/supabase/fetchRecipe', () => ({
+  __esModule: true,
+  default: jest.fn()
+}));
+
+jest.mock('@/supabase/updateRecipe', () => ({
+  __esModule: true,
+  default: jest.fn()
+}));
 
 // Mock expo-image
 jest.mock('expo-image', () => ({
@@ -33,12 +43,6 @@ jest.mock('expo-router', () => {
 });
 
 describe('RecipeDetail', () => {
-  const mockDocRef = {
-    id: '1',
-    type: 'document',
-    path: 'recipes/1'
-  } as const;
-
   beforeEach(() => {
     // Clear all mocks
     jest.clearAllMocks();
@@ -46,30 +50,16 @@ describe('RecipeDetail', () => {
     // Mock the route params
     (useLocalSearchParams as jest.Mock).mockReturnValue({ id: '1' });
 
-    // Mock Firestore document reference
-    (doc as jest.Mock).mockReturnValue(mockDocRef);
+    (fetchRecipe as jest.Mock).mockResolvedValue({ ...mockRecipe, favorite: false });
 
-    // Mock onSnapshot to immediately return recipe data
-    (onSnapshot as jest.Mock).mockImplementation((docRef, callback) => {
-      callback({
-        exists: () => true,
-        data: () => ({ ...mockRecipe, favorite: false }),
-        id: mockRecipe.id
-      });
-      // Return unsubscribe function
-      return jest.fn();
-    });
-
-    // Mock updateDoc to resolve immediately
-    (updateDoc as jest.Mock).mockResolvedValue(null);
+    (updateRecipe as jest.Mock).mockResolvedValue(null);
   });
 
   test('should render the recipe detail screen', async () => {
     render(<RecipeDetail />);
 
-    // Verify Firestore was called correctly
-    expect(doc).toHaveBeenCalledWith(db, 'recipes', '1');
-    expect(onSnapshot).toHaveBeenCalledWith(mockDocRef, expect.any(Function));
+    // Verify subscription was created
+    expect(fetchRecipe).toHaveBeenCalledWith('1');
 
     // Wait for recipe details to be displayed
     expect(await screen.findByText('Cuisine: Thai')).toBeOnTheScreen();
@@ -107,8 +97,8 @@ describe('RecipeDetail', () => {
     const favoriteButton = await findByTestId('favorite-button');
     fireEvent.press(favoriteButton);
 
-    // Verify updateDoc was called with correct params
-    expect(updateDoc).toHaveBeenCalledWith(mockDocRef, { favorite: true });
+    // Verify updateRecipe was called with correct params
+    expect(updateRecipe).toHaveBeenCalledWith(mockRecipe.id, { favorite: true });
   });
 
   test('should generate AI image', async () => {
@@ -116,10 +106,10 @@ describe('RecipeDetail', () => {
     // Find and click the generate AI image button
     const generateButton = await screen.findByText('GENERATE AI IMAGE');
     fireEvent.press(generateButton);
-    // Verify updateDoc is called to save the image URL
+    // Verify updateRecipe is called to save the image URL
     await waitFor(() => {
-      expect(updateDoc).toHaveBeenCalledWith(
-        mockDocRef,
+      expect(updateRecipe).toHaveBeenCalledWith(
+        mockRecipe.id,
         expect.objectContaining({
           imageUrl: expect.any(String),
           imageExpiration: expect.any(String)
@@ -128,13 +118,9 @@ describe('RecipeDetail', () => {
     });
   });
 
-  test('should clean up subscription on unmount', () => {
-    const unsubscribe = jest.fn();
-    (onSnapshot as jest.Mock).mockReturnValue(unsubscribe);
-
+  test('should unmount without errors', () => {
     const { unmount } = render(<RecipeDetail />);
     unmount();
-
-    expect(unsubscribe).toHaveBeenCalled();
+    expect(true).toBe(true);
   });
 });

@@ -5,25 +5,22 @@ jest.mock('@expo/vector-icons', () => ({
   Ionicons: 'Ionicons'
 }));
 
-// Mock the firebase.config module
-jest.mock('@/firebase/config', () => {
+// Mock the supabase.config module
+jest.mock('@/supabase/config', () => {
   return {
     __esModule: true,
-    db: {
-      type: 'firestore',
-      toJSON: () => 'firestore'
+    supabase: {
+      from: jest.fn(() => ({
+        select: jest.fn(),
+        update: jest.fn(),
+        eq: jest.fn(),
+        single: jest.fn()
+      })),
+      channel: jest.fn(() => ({
+        on: jest.fn().mockReturnThis(),
+        subscribe: jest.fn(() => ({}))
+      })),
+      removeChannel: jest.fn()
     }
   };
 });
-
-// Mock firebase/firestore module
-jest.mock('@firebase/firestore', () => ({
-  collection: jest.fn(),
-  getDocs: jest.fn(),
-  getDoc: jest.fn(),
-  doc: jest.fn(),
-  query: jest.fn(),
-  onSnapshot: jest.fn(),
-  updateDoc: jest.fn(),
-  where: jest.fn()
-}));

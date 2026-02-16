@@ -4,7 +4,7 @@ import useRecipeDetail from './useRecipeDetail';
 import { useLocalSearchParams, useNavigation } from 'expo-router';
 import { useEffect, useCallback, useMemo } from 'react';
 import { Ionicons } from '@expo/vector-icons';
-import updateRecipe from '@/firebase/updateRecipe';
+import updateRecipe from '@/supabase/updateRecipe';
 
 const RecipeDetail = () => {
   const { id } = useLocalSearchParams<{ id: string }>();

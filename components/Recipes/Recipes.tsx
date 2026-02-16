@@ -1,7 +1,7 @@
 import { View, ScrollView, Pressable } from 'react-native';
 import useRecipe from './useRecipe';
 import { useRouter, useNavigation } from 'expo-router';
-import updateRecipe from '@/firebase/updateRecipe';
+import updateRecipe from '@/supabase/updateRecipe';
 import { Recipe } from '@/types';
 import React, { useEffect, useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';

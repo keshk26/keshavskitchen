@@ -14,7 +14,7 @@ Recipes and I have saved over time. View and filter recipes and save your favori
 This tech stack would be similar to a production app.  
 - TypeScript
 - Expo/Expo Router
-- Firebase Firestore to store recipes
+- Supabase Postgres to store recipes
 - Open AI to generate images
 - Expo Vector Icons
 - Expo Image

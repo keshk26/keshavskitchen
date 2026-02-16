@@ -2,7 +2,7 @@ import React from 'react';
 import { View, ScrollView } from 'react-native';
 import useRecipe from '../Recipes/useRecipe';
 import { useRouter } from 'expo-router';
-import updateRecipe from '@/firebase/updateRecipe';
+import updateRecipe from '@/supabase/updateRecipe';
 import { Recipe } from '@/types';
 import SuspenseFallback from '../Global/SuspenseFallback';
 import NoFavorites from './NoFavorites';

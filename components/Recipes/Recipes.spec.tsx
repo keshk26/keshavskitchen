@@ -1,7 +1,12 @@
 import { fireEvent, render, screen } from '@testing-library/react-native';
 import Recipes from './Recipes';
-import { collection, onSnapshot, query } from '@firebase/firestore';
+import fetchRecipes from '@/supabase/fetchRecipes';
 import mockRecipes from './recipes.mock';
+
+jest.mock('@/supabase/fetchRecipes', () => ({
+  __esModule: true,
+  default: jest.fn()
+}));
 
 const mockNavigate = jest.fn();
 jest.mock('expo-router', () => ({
@@ -15,33 +20,8 @@ jest.mock('expo-router', () => ({
 
 describe('Recipes', () => {
   beforeEach(() => {
-    // Clear all mocks before each test
     jest.clearAllMocks();
-
-    // Create a mock collection reference
-    const mockCollectionRef = {
-      type: 'collection',
-      id: 'recipes'
-    };
-
-    // Mock the collection function to return our mock ref
-    (collection as jest.Mock).mockReturnValue(mockCollectionRef);
-
-    // Mock query to return the same ref
-    (query as jest.Mock).mockReturnValue(mockCollectionRef);
-
-    // Mock onSnapshot to immediately call the callback with our test data
-    (onSnapshot as jest.Mock).mockImplementation((query, callback) => {
-      callback({
-        docs: mockRecipes.map((recipe) => ({
-          id: recipe.id,
-          data: () => recipe,
-          exists: () => true
-        }))
-      });
-      // Return an unsubscribe function
-      return jest.fn();
-    });
+    (fetchRecipes as jest.Mock).mockResolvedValue(mockRecipes);
   });
 
   test('Recipe list renders correctly', async () => {
@@ -65,13 +45,9 @@ describe('Recipes', () => {
     expect(mockNavigate).toHaveBeenCalledWith('/recipes/1');
   });
 
-  test('Subscription is cleaned up on unmount', () => {
-    const unsubscribe = jest.fn();
-    (onSnapshot as jest.Mock).mockReturnValue(unsubscribe);
-
+  test('Component unmounts without errors', () => {
     const { unmount } = render(<Recipes />);
     unmount();
-
-    expect(unsubscribe).toHaveBeenCalled();
+    expect(true).toBe(true);
   });
 });

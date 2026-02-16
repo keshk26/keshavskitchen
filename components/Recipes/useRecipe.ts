@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Recipe, FilterOptions } from '@/types';
-import subscribeToRecipes from '@/firebase/subscribeToRecipes';
+import fetchRecipes from '@/supabase/fetchRecipes';
 
 interface UseRecipeReturn {
   recipes: Recipe[] | null;
@@ -13,7 +13,7 @@ const useRecipe = (filterOption: FilterOptions): UseRecipeReturn => {
   const [loading, setLoading] = useState(true);
 
   // Create a filter reference for favorite filter only
-  // This is filtered via firebase
+  // This is filtered via supabase
   const favoriteFilter = useMemo(() => {
     if (!filterOption?.favorite) return;
     return { favorite: filterOption.favorite };
@@ -33,13 +33,24 @@ const useRecipe = (filterOption: FilterOptions): UseRecipeReturn => {
   }, [allRecipes, filterOption?.cuisine]);
 
   useEffect(() => {
+    let active = true;
     setLoading(true);
-    const unsubscribe = subscribeToRecipes((fetchedRecipes: Recipe[]) => {
-      setAllRecipes(fetchedRecipes);
-      setLoading(false);
-    }, favoriteFilter);
 
-    return () => unsubscribe();
+    fetchRecipes(favoriteFilter)
+      .then((fetchedRecipes) => {
+        if (!active) return;
+        setAllRecipes(fetchedRecipes);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error('Error fetching recipes:', error);
+        if (!active) return;
+        setLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
   }, [favoriteFilter]);
 
   return { recipes, loading, cuisines };

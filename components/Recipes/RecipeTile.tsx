@@ -17,19 +17,23 @@ const RecipeTile: React.FC<RecipeTileProps> = ({ recipe, onPress, onFavoritePres
       onPress={() => onPress(recipe.id)}
     >
       <View className="flex-1">
-        <Text className="mb-1 text-lg font-semibold text-gray-800">{recipe.name}</Text>
+        <Text className="mb-1 text-lg font-semibold text-gray-800">
+          {recipe?.name ?? 'Unknown'}
+        </Text>
         <View className="flex-row gap-4">
           <View className="flex-row items-center gap-1">
             <Ionicons name="restaurant-outline" size={16} color="#666" />
-            <Text className="text-sm text-gray-600">{recipe.cuisine}</Text>
+            <Text className="text-sm text-gray-600">{recipe?.cuisine ?? 'Unknown'}</Text>
           </View>
           <View className="flex-row items-center gap-1">
             <Ionicons name="time-outline" size={16} color="#666" />
-            <Text className="text-sm text-gray-600">{recipe.time} minutes</Text>
+            <Text className="text-sm text-gray-600">{recipe?.time ?? 0} minutes</Text>
           </View>
           <View className="flex-row items-center gap-1">
             <Ionicons name="list" size={16} color="#666" />
-            <Text className="text-sm text-gray-600">{recipe.ingredients.length} ingredients</Text>
+            <Text className="text-sm text-gray-600">
+              {recipe?.ingredients?.length ?? 0} ingredients
+            </Text>
           </View>
         </View>
       </View>
