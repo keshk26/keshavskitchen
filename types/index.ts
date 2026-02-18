@@ -3,11 +3,25 @@ export interface Recipe {
   name: string;
   cuisine: string;
   time: number;
-  ingredients: string[];
-  instructions: string[];
+  ingredients: Ingredient[];
+  instructions: Instruction[];
   favorite?: boolean;
   imageUrl?: string;
   imageExpiration?: string;
+}
+
+export interface Ingredient {
+  id: string;
+  text: string;
+  position: number;
+  recipe_id: string;
+}
+
+export interface Instruction {
+  id: string;
+  text: string;
+  position: number;
+  recipe_id: string;
 }
 
 export type FilterOptions = {

@@ -2,7 +2,7 @@ import { Recipe, FilterOptions } from '@/types';
 import { supabase } from './config';
 
 const fetchRecipes = async (filter?: FilterOptions): Promise<Recipe[]> => {
-  let query = supabase.from('recipes').select('*');
+  let query = supabase.from('recipes').select('*, ingredients(*)');
 
   if (filter?.favorite !== undefined) {
     query = query.eq('favorite', filter.favorite);

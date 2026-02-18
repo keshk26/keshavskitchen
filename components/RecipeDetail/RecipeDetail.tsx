@@ -104,18 +104,18 @@ const RecipeDetail = () => {
 
         <View className="mb-6">
           <Text className="mb-2 text-xl font-semibold">Ingredients</Text>
-          {recipe.ingredients.map((ingredient, index) => (
-            <Text key={index} className="mb-1 text-gray-600">
-              • <Text>{ingredient}</Text>
+          {recipe?.ingredients.map((ingredient) => (
+            <Text key={ingredient.id} className="mb-1 text-gray-600">
+              • <Text>{ingredient.text}</Text>
             </Text>
           ))}
         </View>
 
         <View>
           <Text className="mb-2 text-xl font-semibold">Instructions</Text>
-          {recipe.instructions.map((instruction, index) => (
-            <Text key={index} className="mb-2 text-gray-600">
-              {index + 1}. <Text>{instruction}</Text>
+          {recipe.instructions.map((instruction) => (
+            <Text key={instruction.id} className="mb-2 text-gray-600">
+              {instruction.position + 1}. <Text>{instruction.text}</Text>
             </Text>
           ))}
         </View>
